@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    
+
+
+
+{% block title %}Lista de Usuarios{% endblock %}
+
+
+
+{% block content %}
+{% csrf_token %}
+{% load crispy_forms_tags %}
+ 
+<div class="container d-fluid justify-content-center">
+    <div class="text-center">
+        <h1>Usuarios Registrados</h1>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+            <div class="row col-md-12">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>ROL</th>
+                <th>Empresa</th>
+                <th>Email</th>
+                <th>Telefono</th>
+                <th>F. de Registro</th>
+                <th class="text-center">Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.first_name }}</td>
+                    <td>{{ u.last_name }}</td>
+                    <td>{{ u.rol }}</td>
+                    <td>{{ u.company_name }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.phone_number }}</td>
+                    <td>{{ u.fecha_registro|date:"d-m-Y" }}</td>
+                    <td class="text-center">
+                        <a class="bi bi-trash3" style="margin-right: 20px; color: rgb(171, 6, 6);" href="" ></a>
+                        <a class="bi bi-pencil-square" style="color: rgb(18, 18, 159);" href="" ></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if usuarios.has_previous %}
+        <a href="?page={{ usuarios.previous_page_number }}">Anterior</a>
+    {% endif %}
+    
+    {% if usuarios.has_next %}
+        <a href="?page={{ usuarios.next_page_number }}">Siguiente</a>
+    {% endif %}
+
+
+    </div>
+
+
+    </div>
+
+</div>
+
+
+
+
+{% endblock %}
+
+
+
+
+</body>
+</html>
+
+create
