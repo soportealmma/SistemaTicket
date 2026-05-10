@@ -9,7 +9,6 @@ from django.contrib.auth.models import User, Group
 from .forms import TicketForm, MensajeForm, FabricanteForm
 import datetime
 from django.utils import timezone
-import holidays
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
@@ -19,25 +18,6 @@ from django.template.loader import render_to_string
 def is_soporte_or_admin(user):
     return user.groups.filter(name__in=['Soporte', 'Administrador']).exists()
 
-
-
-# Definir feriados de Chile (puedes cambiar a otro país si es necesario)
-feriados = holidays.Chile(years=[2025, 2026])
-
-def sumar_horas_habiles(fecha_inicio, horas):
-    fecha = fecha_inicio
-    horas_restantes = horas
-
-    while horas_restantes > 0:
-        fecha += datetime.timedelta(hours=1)
-
-        # Si es fin de semana o feriado, saltar
-        if fecha.weekday() >= 5 or fecha.date() in feriados:
-            continue
-
-        horas_restantes -= 1
-
-    return fecha
 
 
 
