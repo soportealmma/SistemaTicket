@@ -11,8 +11,8 @@ import datetime
 from django.utils import timezone
 import holidays
 from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
+from django.template.loader import render_to_string
+
 
 
 
@@ -50,9 +50,6 @@ def home(request):
     #elif is_soporte_or_admin(request.user):
         #return redirect('dashboard')
     return render(request, 'home.html')
-
-
-
 
 
 @login_required

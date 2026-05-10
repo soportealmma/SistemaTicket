@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'gestion_tickets',
     'crispy_forms',
     'crispy_bootstrap5',
-    'xhtml2pdf',  # Para generar PDFs
     'mantenedor',
     'dashboard',
 

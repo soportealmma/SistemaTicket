@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin       
 from django.views.generic import TemplateView
 from django.http import HttpResponse
-
 from django.contrib.auth import get_user_model
 #from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .forms import UsuarioForm, UsuarioUpdateForm, LoginForm
@@ -83,21 +82,6 @@ def createUsuario(request):
 
     return render(request, 'createUsuario.html', {'form': form})
 
-
-
-
-#@login_required
-#def createUsuario(request):
-    #if request.method == 'POST':
-        #form = UsuarioForm(request.POST, request=request)
-        #if form.is_valid():
-           # form.save()
-          #  messages.success(request, "Usuario creado exitosamente.")
-           # return redirect('login')
-  #  else:
-       # form = UsuarioForm()
-   # return render(request, 'createUsuario.html', {'form': form})
-   
 
 
 def updateUsuario(request, pk):

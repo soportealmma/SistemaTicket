@@ -1,140 +1,152 @@
 {% extends 'base.html' %}
-{% load static %}
+
 
 {% block title %}Sistema de Soporte - Grupo Almma{% endblock %}
 
 {% block content %}
-<!-- Navbar Personalizada -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-slate-900 shadow-lg sticky-top py-3">
-    <div class="container">
-        <a class="navbar-brand font-bold text-2xl tracking-tight" href="#">
-            GRUPO <span class="text-blue-500">ALMMAaaaa</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+{% load static %}
+
+<body>
         
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!-- Dropdown Menús Corporativos -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                        Áreas de Gestión
-                    </a>
-                    <ul class="dropdown-menu shadow-xl border-0">
-                        <li><a class="dropdown-item py-2" href="#"><i class="bi bi-headset me-2 text-blue-600"></i>Soporte</a></li>
-                        <li><a class="dropdown-item py-2" href="#"><i class="bi bi-graph-up-arrow me-2 text-blue-600"></i>Comercial</a></li>
-                        <li><a class="dropdown-item py-2" href="#"><i class="bi bi-cpu me-2 text-blue-600"></i>Informática</a></li>
-                        <li><a class="dropdown-item py-2" href="#"><i class="bi bi-truck me-2 text-blue-600"></i>Logística</a></li>
-                        <li><a class="dropdown-item py-2" href="#"><i class="bi bi-gear me-2 text-blue-600"></i>Operaciones</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item py-2" href="#"><i class="bi bi-file-earmark-text me-2 text-blue-600"></i>Documentos</a></li>
-                    </ul>
-                </li>
-            </ul>
-            
-            <!-- Botones de Sesión -->
-            <div class="d-flex gap-2">
-                {% if user.is_authenticated %}
-                    <span class="text-gray-300 me-3 self-center">Hola, <b>{{ user.username }}</b></span>
-                    <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm px-4 rounded-pill">Cerrar Sesión</a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm px-4 rounded-pill">Iniciar Sesión</a>
-                    <a href="#" class="btn btn-blue-500 bg-blue-600 text-white btn-sm px-4 rounded-pill border-0">Registro</a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</nav>
-
-<div class="container-fluid p-0">
-    <!-- Hero / Carrusel -->
-    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner" style="height: 500px;">
-            <!-- Imagen 1 -->
-            <div class="carousel-item active h-100">
-                <img src="{% static '/admin/img/banner1.jpg' %}" class="d-block w-100 h-100 object-cover brightness-50" alt="...">
-                <div class="carousel-caption d-none d-md-block mb-10">
-                    <h2 class="text-5xl font-extrabold mb-4">Soporte Rápido y Eficaz</h2>
-                    <p class="text-xl">Estamos listos para resolver tus incidencias técnicas.</p>
+    <div class="container-fluid p-0">
+        <!-- Hero / Carrusel -->
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner" style="height: 500px;">
+                <!-- Imagen 1 -->
+                <div class="carousel-item active h-100">
+                    <img src="{% static '/admin/img/banner1.jpg' %}" class="d-block w-100 h-100 object-cover brightness-50" alt="...">
+                    <div class="carousel-caption d-none d-md-block mb-10">
+                        <h2 class="text-5xl font-extrabold mb-4">Soporte Rápido y Eficaz</h2>
+                        <p class="text-xl">Estamos listos para resolver tus incidencias técnicas.</p>
+                    </div>                
                 </div>
+                <!-- Imagen 2 -->
+                <div class="carousel-item active h-100">
+                    <img src="{% static '/admin/img/banner2.jpg' %}" class="d-block w-100 h-100 object-cover brightness-50" alt="...">
+                    <div class="carousel-caption d-none d-md-block mb-10">
+                        <h2 class="text-5xl font-extrabold mb-4">Soporte Rápido y Eficaz</h2>
+                        <p class="text-xl">Estamos listos para resolver tus incidencias técnicas.</p>
+                    </div>                
+                </div>
+                <!-- Imagen 3 -->
+                <div class="carousel-item active h-100">
+                    <img src="{% static '/admin/img/banner3.jpg' %}" class="d-block w-100 h-100 object-cover brightness-50" alt="...">
+                    <div class="carousel-caption d-none d-md-block mb-10">
+                        <h2 class="text-5xl font-extrabold mb-4">Soporte Rápido y Eficaz</h2>
+                        <p class="text-xl">Estamos listos para resolver tus incidencias técnicas.</p>
+                    </div>                
+                </div>
+                <!-- Imagen 4 -->
+                <div class="carousel-item active h-100">
+                    <img src="{% static '/admin/img/banner4.jpg' %}" class="d-block w-100 h-100 object-cover brightness-50" alt="...">
+                    <div class="carousel-caption d-none d-md-block mb-10">
+                        <h2 class="text-5xl font-extrabold mb-4">Soporte Rápido y Eficaz</h2>
+                        <p class="text-xl">Estamos listos para resolver tus incidencias técnicas.</p>
+                    </div>                
+                </div>
+                <!-- Imagen 5 -->
+                <div class="carousel-item active h-100">
+                    <img src="{% static '/admin/img/banner5.jpg' %}" class="d-block w-100 h-100 object-cover brightness-50" alt="...">
+                    <div class="carousel-caption d-none d-md-block mb-10">
+                        <h2 class="text-5xl font-extrabold mb-4">Soporte Rápido y Eficaz</h2>
+                        <p class="text-xl">Estamos listos para resolver tus incidencias técnicas.</p>
+                    </div>                
+                </div>
+                <!-- Imagen 6 -->
+                <div class="carousel-item active h-100">
+                    <img src="{% static '/admin/img/banner6.jpg' %}" class="d-block w-100 h-100 object-cover brightness-50" alt="...">
+                    <div class="carousel-caption d-none d-md-block mb-10">
+                        <h2 class="text-5xl font-extrabold mb-4">Soporte Rápido y Eficaz</h2>
+                        <p class="text-xl">Estamos listos para resolver tus incidencias técnicas.</p>
+                    </div>                
+                </div>
+                <!-- Imagen 7 -->
+                <div class="carousel-item active h-100">
+                    <img src="{% static '/admin/img/banner4.jpg' %}" class="d-block w-100 h-100 object-cover brightness-50" alt="...">
+                    <div class="carousel-caption d-none d-md-block mb-10">
+                        <h2 class="text-5xl font-extrabold mb-4">Soporte Rápido y Eficaz</h2>
+                        <p class="text-xl">Estamos listos para resolver tus incidencias técnicas.</p>
+                    </div>                
+                </div>
+                <!-- Repetir lógica para banner 2 y 3... -->
             </div>
-            <!-- Repetir lógica para banner 2 y 3... -->
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </button>
-    </div>
-
-    <!-- Sección de Acciones Rápidas -->
-    <div class="container my-16">
-        <div class="text-center mb-12">
-            <h1 class="text-3xl font-bold text-slate-800">Panel de Control de Usuario</h1>
-            <div class="w-20 h-1 bg-blue-600 mx-auto mt-2"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
         </div>
 
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-2xl transition-all border-t-4 border-blue-600 group">
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
-                        <i class="bi bi-plus-circle text-blue-600 group-hover:text-white text-2xl"></i>
+        <!-- Sección de Acciones Rápidas -->
+        <div class="container my-16">
+            <div class="text-center mb-12">
+                <h1 class="text-3xl font-bold text-slate-800">Panel de Control de Usuario</h1>
+                <div class="w-20 h-1 bg-blue-600 mx-auto mt-2"></div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-2xl transition-all border-t-4 border-blue-600 group">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
+                            <i class="bi bi-plus-circle text-blue-600 group-hover:text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Envía un Ticket</h3>
+                        <p class="text-gray-500 mb-6 small">Reporta un problema técnico o solicita un nuevo servicio.</p>
+                        <a href="{% url 'crear_ticket' %}" class="btn btn-primary w-100 py-2 rounded-lg">Crear Ticket</a>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Envía un Ticket</h3>
-                    <p class="text-gray-500 mb-6 small">Reporta un problema técnico o solicita un nuevo servicio.</p>
-                    <a href="{% url 'crear_ticket' %}" class="btn btn-primary w-100 py-2 rounded-lg">Crear Ticket</a>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-2xl transition-all border-t-4 border-green-600 group">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
+                            <i class="bi bi-search text-green-600 group-hover:text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Revisa el Estado</h3>
+                        <p class="text-gray-500 mb-6 small">Sigue el progreso de tus tickets abiertos y cerrados.</p>
+                        <a href="{% url 'listar_ticket' %}" class="btn btn-success w-100 py-2 rounded-lg">Ver mis Tickets</a>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-2xl transition-all border-t-4 border-purple-600 group">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
+                            <i class="bi bi-journal-text text-purple-600 group-hover:text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Base de Conocimientos</h3>
+                        <p class="text-gray-500 mb-6 small">Manuales y tutoriales para resolver dudas frecuentes.</p>
+                        <a href="#" class="btn btn-secondary w-100 py-2 rounded-lg" style="background-color: #6b21a8; border:none;">Explorar Artículos</a>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="col-md-4">
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-2xl transition-all border-t-4 border-green-600 group">
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
-                        <i class="bi bi-search text-green-600 group-hover:text-white text-2xl"></i>
+        <!-- Newsletter Section (Pre-Footer) -->
+        <div class="bg-slate-100 py-16">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 text-center">
+                        <h3 class="text-2xl font-bold mb-2">Mantente informado</h3>
+                        <p class="text-gray-600 mb-6">Recibe actualizaciones sobre mantenimientos y nuevas herramientas del Grupo Almma.</p>
+                        <form class="d-flex gap-2">
+                            <input type="email" class="form-control form-control-lg rounded-pill px-4" placeholder="Tu correo electrónico">
+                            <button type="submit" class="btn btn-blue-600 bg-blue-700 text-white px-5 rounded-pill hover:bg-blue-800">Suscribirse</button>
+                        </form>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Revisa el Estado</h3>
-                    <p class="text-gray-500 mb-6 small">Sigue el progreso de tus tickets abiertos y cerrados.</p>
-                    <a href="{% url 'listar_ticket' %}" class="btn btn-success w-100 py-2 rounded-lg">Ver mis Tickets</a>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-2xl transition-all border-t-4 border-purple-600 group">
-                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
-                        <i class="bi bi-journal-text text-purple-600 group-hover:text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Base de Conocimientos</h3>
-                    <p class="text-gray-500 mb-6 small">Manuales y tutoriales para resolver dudas frecuentes.</p>
-                    <a href="#" class="btn btn-secondary w-100 py-2 rounded-lg" style="background-color: #6b21a8; border:none;">Explorar Artículos</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Newsletter Section (Pre-Footer) -->
-    <div class="bg-slate-100 py-16">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8 text-center">
-                    <h3 class="text-2xl font-bold mb-2">Mantente informado</h3>
-                    <p class="text-gray-600 mb-6">Recibe actualizaciones sobre mantenimientos y nuevas herramientas del Grupo Almma.</p>
-                    <form class="d-flex gap-2">
-                        <input type="email" class="form-control form-control-lg rounded-pill px-4" placeholder="Tu correo electrónico">
-                        <button type="submit" class="btn btn-blue-600 bg-blue-700 text-white px-5 rounded-pill hover:bg-blue-800">Suscribirse</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <style>
+        .object-cover { object-fit: cover; }
+        .brightness-50 { filter: brightness(0.5); }
+        .bg-slate-900 { background-color: #0f172a; }
+    </style>
 
-<style>
-    .object-cover { object-fit: cover; }
-    .brightness-50 { filter: brightness(0.5); }
-    .bg-slate-900 { background-color: #0f172a; }
-</style>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://jsdelivr.net">
+    {% endblock %}
 
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://jsdelivr.net">
-{% endblock %}
+
+</body>
