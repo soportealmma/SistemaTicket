@@ -1,0 +1,236 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold">Gestor de Tareas</h2>
+
+        <!-- Botón para abrir modal -->
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearTarea">
+            + Crear Tarea
+        </button>
+    </div>
+
+    <!-- Filtros -->
+    <form method="GET" class="row g-2 mb-3">
+
+        <div class="col-md-3">
+            <select name="estado" class="form-select">
+                <option value="">Estado</option>
+                {% for key, val in ESTADOS %}
+                    <option value="{{ key }}"
+                        {% if filtros.estado == key %}selected{% endif %}>
+                        {{ val }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <select name="criticidad" class="form-select">
+                <option value="">Criticidad</option>
+                {% for key, val in CRITICIDADES %}
+                    <option value="{{ key }}"
+                        {% if filtros.criticidad == key %}selected{% endif %}>
+                        {{ val }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <select name="area" class="form-select">
+                <option value="">Área</option>
+                {% for key, val in AREAS %}
+                    <option value="{{ key }}"
+                        {% if filtros.area == key %}selected{% endif %}>
+                        {{ val }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <select name="responsable" class="form-select">
+                <option value="">Responsable</option>
+                {% for user in responsables %}
+                    <option value="{{ user.id }}"
+                        {% if filtros.responsable == user.id|stringformat:"s" %}selected{% endif %}>
+                        {{ user.first_name }} {{ user.last_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-12 d-flex justify-content-end mt-2">
+            <button class="btn btn-primary me-2">Filtrar</button>
+            <a href="{% url 'listar_tareas' %}" class="btn btn-outline-secondary">Limpiar</a>
+        </div>
+
+    </form>
+
+    <!-- Tabla de tareas -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Criticidad</th>
+                        <th>Estado</th>
+                        <th>Área</th>
+                        <th>Título</th>
+                        <th>Responsable</th>
+                        <th>Fecha Compromiso</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for tarea in tareas %}
+                    <tr class="{% if tarea.esta_atrasada %}table-danger{% endif %}">
+                        <!-- Criticidad -->
+                        <td>
+                            <span class="badge bg-{{ tarea.color_criticidad }}">
+                                {{ tarea.get_criticidad_display }}
+                            </span>
+                        </td>
+
+                        <!-- Estado -->
+                        <td>
+                            <span class="badge bg-{{ tarea.color_estado }}">
+                                {{ tarea.get_estado_display }}
+                            </span>
+                        </td>
+
+                        <!-- Área -->
+                        <td>
+                            <span class="badge bg-dark">
+                                {{ tarea.get_area_display }}
+                            </span>
+                        </td>
+
+                        <!-- Título -->
+                        <td class="fw-semibold">
+                            {{ tarea.titulo }}
+                        </td>
+
+                        <!-- Responsable -->
+                        <td>
+                            {% if tarea.responsable %}
+                                {{ tarea.responsable.first_name }} {{ tarea.responsable.last_name }}
+                            {% else %}
+                                <span class="text-muted">Sin asignar</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Fecha compromiso -->
+                        <td>
+                            {{ tarea.fecha_compromiso|date:"d/m/Y" }}
+                        </td>
+
+                        <!-- Acciones -->
+                        <td class="text-end">
+                            <a href="{% url 'detalle_tarea' tarea.id %}" class="btn btn-sm btn-outline-primary">
+                                Ver
+                            </a>
+                            <a href="{% url 'editar_tarea' tarea.id %}" class="btn btn-sm btn-outline-secondary">
+                                Editar
+                            </a>
+                            <a href="{% url 'cerrar_tarea' tarea.id %}" class="btn btn-sm btn-outline-danger">
+                                Cerrar
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            No hay tareas registradas.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ===========================
+     MODAL CREAR TAREA
+=========================== -->
+<div class="modal fade" id="modalCrearTarea" tabindex="-1" aria-labelledby="modalCrearTareaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <form method="POST" action="{% url 'crear_tarea' %}">
+                {% csrf_token %}
+
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Crear Nueva Tarea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Título</label>
+                            {{ form_crear.titulo }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha Compromiso</label>
+                            {{ form_crear.fecha_compromiso }}
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Descripción</label>
+                            {{ form_crear.descripcion }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Criticidad</label>
+                            {{ form_crear.criticidad }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Estado</label>
+                            {{ form_crear.estado }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Responsable</label>
+                            {{ form_crear.responsable }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Área</label>
+                            {{ form_crear.area }}
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Observaciones</label>
+                            {{ form_crear.observaciones }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Tarea</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

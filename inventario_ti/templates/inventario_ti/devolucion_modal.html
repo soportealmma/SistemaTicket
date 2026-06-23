@@ -1,0 +1,31 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h3 class="fw-bold mb-3">Recepción de Equipos</h3>
+
+    <form method="POST" action="{% url 'procesar_devolucion' asignacion.id %}">
+        {% csrf_token %}
+
+        <h5>Selecciona los equipos a devolver</h5>
+        {{ form.equipos }}
+
+        <h5 class="mt-3">Selecciona los celulares a devolver</h5>
+        {{ form.celulares }}
+
+        <h5 class="mt-3">Selecciona las licencias a devolver</h5>
+        {{ form.licencias }}
+
+        <h5 class="mt-3">Motivo de devolución</h5>
+        {{ form.motivo }}
+
+        <h5 class="mt-3">Observaciones</h5>
+        {{ form.observaciones }}
+
+        <button class="btn btn-success mt-3">Procesar devolución</button>
+        <a href="{% url 'listar_asignaciones' %}" class="btn btn-secondary mt-3">Cancelar</a>
+    </form>
+
+</div>
+{% endblock %}

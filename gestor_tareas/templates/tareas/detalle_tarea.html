@@ -1,0 +1,114 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold">Tarea #{{ tarea.id }} — {{ tarea.titulo }}</h3>
+
+        <a href="{% url 'cerrar_tarea' tarea.id %}" class="btn btn-danger">
+            Cerrar Tarea
+        </a>
+
+
+        <a href="{% url 'listar_tareas' %}" class="btn btn-secondary">
+            Volver
+        </a>
+    </div>
+
+    <!-- Información principal -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label class="fw-bold">Estado:</label><br>
+                    <span class="badge bg-secondary">{{ tarea.get_estado_display }}</span>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="fw-bold">Criticidad:</label><br>
+                    <span class="badge bg-{{ tarea.color_criticidad }}">
+                        {{ tarea.get_criticidad_display }}
+                    </span>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="fw-bold">Fecha Compromiso:</label><br>
+                    {{ tarea.fecha_compromiso|date:"d/m/Y" }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="fw-bold">Responsable:</label><br>
+                    {% if tarea.responsable %}
+                        {{ tarea.responsable.first_name }} {{ tarea.responsable.last_name }}
+                    {% else %}
+                        <span class="text-muted">Sin asignar</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="mb-3">
+                <label class="fw-bold">Descripción:</label>
+                <div class="border rounded p-2 bg-light">
+                    {{ tarea.descripcion|default:"Sin descripción" }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="fw-bold">Observaciones:</label>
+                <div class="border rounded p-2 bg-light">
+                    {{ tarea.observaciones|default:"Sin observaciones" }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Historial de mensajes -->
+    <h5 class="fw-bold mb-3">Historial de Mensajes</h5>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body" style="max-height: 350px; overflow-y: auto;">
+
+            {% for msg in mensajes %}
+            <div class="mb-3 p-2 border rounded bg-light">
+                <div class="d-flex justify-content-between">
+                    <strong>{{ msg.usuario.first_name }} {{ msg.usuario.last_name }}</strong>
+                    <small class="text-muted">{{ msg.fecha|date:"d/m/Y H:i" }}</small>
+                </div>
+                <div>{{ msg.mensaje }}</div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No hay mensajes aún.</p>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <!-- Formulario para agregar mensaje -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+
+            <form method="POST" action="{% url 'agregar_mensaje_tarea' tarea.id %}">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Agregar mensaje</label>
+                    {{ form_mensaje.mensaje }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

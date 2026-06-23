@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: DejaVu Sans; font-size: 12px; }
+        .titulo { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .seccion { margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { border: 1px solid #000; padding: 6px; }
+    </style>
+</head>
+<body>
+
+<!-- ENCABEZADO CORPORATIVO -->
+<table style="width:100%; border-bottom: 2px solid #004080; margin-bottom:15px;">
+    <tr>
+        <td style="width:50%;">
+            <img src="{% static 'admin/img/logodoc.png' %}" class="img-header"
+                 style="width:230px;">
+        </td>
+        <td style="width:50%; text-align:right; font-size:12px; color:#004080;">
+            <strong>Grupo Almma</strong><br>
+            Servicios Técnicos y Soluciones Industriales<br>
+            www.grupoalmma.cl<br>
+            soporte@grupoalmma.cl
+        </td>
+    </tr>
+</table>
+
+
+<div class="titulo">Reporte de Llave WIBU / ESD</div>
+
+<table>
+    <tr><th>Cliente</th><td>{{ llave.cliente }}</td></tr>
+    <tr><th>RUT</th><td>{{ llave.rut }}</td></tr>
+    <tr><th>Contacto</th><td>{{ llave.contacto }}</td></tr>
+    <tr><th>Fecha de Registro</th><td>{{ llave.fecha_registro }}</td></tr>
+    <tr><th>Tipo Llave</th><td>{{ llave.tipo_llave }}</td></tr>
+    <tr><th>N° Serie</th><td>{{ llave.numero_serie }}</td></tr>
+    <tr><th>Fecha Vencimiento Actual</th><td>{{ llave.fecha_vencimiento }}</td></tr>
+</table>
+
+<br>
+
+<h3>Historial de Renovaciones</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Fecha Registro</th>
+            <th>Nuevo Vencimiento</th>
+            <th>Documento</th>
+            <th>N°</th>
+            <th>Observaciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for h in llave.historial.all %}
+        <tr>
+            <td>{{ h.fecha_registro|date:"d-m-Y H:i" }}</td>
+            <td>{{ h.fecha_vencimiento_nueva }}</td>
+            <td>{{ h.tipo_documento }}</td>
+            <td>{{ h.numero_documento }}</td>
+            <td>{{ h.observaciones }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+<footer>
+    Grupo Almma – Reporte generado automáticamente.  
+    Este documento es válido sin firma física.
+    <br>
+    <span class="text"><b>Exportado por: {{ username.username }} {{ username.last_name }}, el {% now "d/m/Y" %}.</b></span>
+</footer>
+
+</body>
+</html>

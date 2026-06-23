@@ -1,0 +1,250 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">Dashboard de Métricas — Tareas</h3>
+        <a href="{% url 'listar_tareas' %}" class="btn btn-secondary">Volver</a>
+    </div>
+
+    <form method="GET" class="row g-2 mb-4">
+
+        <div class="col-md-4">
+            <label class="form-label">Fecha inicio</label>
+            <input type="date" name="fecha_inicio" class="form-control"
+                value="{{ request.GET.fecha_inicio }}">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Fecha fin</label>
+            <input type="date" name="fecha_fin" class="form-control"
+                value="{{ request.GET.fecha_fin }}">
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary w-100 me-2">Aplicar</button>
+            <a href="{% url 'dashboard_tareas' %}" class="btn btn-secondary w-100">Limpiar</a>
+        </div>
+
+    </form>
+
+
+    <!-- ============================
+         TARJETAS SUPERIORES (KPIs)
+    ============================ -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-3">
+                <h6 class="fw-bold text-danger">Tareas Atrasadas</h6>
+                <span class="display-5 fw-bold text-danger">{{ total_atrasadas }}</span>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-3">
+                <h6 class="fw-bold text-primary">Tiempo Promedio de Resolución</h6>
+                <span class="display-6 fw-bold">{{ tiempo_promedio_horas }} h</span>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-3">
+                <h6 class="fw-bold text-success">Tareas Creadas este Mes</h6>
+                <span class="display-6 fw-bold">
+                    {{ tareas_creadas_mes|length }}
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================
+         GRID DE GRÁFICOS
+    ============================ -->
+    <div class="row g-4">
+
+        <!-- Creadas por mes -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3">
+                <h6 class="fw-bold text-center">Tareas Creadas por Mes</h6>
+                <canvas id="chartCreadasMes"></canvas>
+            </div>
+        </div>
+
+        <!-- Cerradas por mes -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3">
+                <h6 class="fw-bold text-center">Tareas Cerradas por Mes</h6>
+                <canvas id="chartCerradasMes"></canvas>
+            </div>
+        </div>
+
+        <!-- Estado -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h6 class="fw-bold text-center">Por Estado</h6>
+                <canvas id="chartEstado"></canvas>
+            </div>
+        </div>
+
+        <!-- Criticidad -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h6 class="fw-bold text-center">Por Criticidad</h6>
+                <canvas id="chartCriticidad"></canvas>
+            </div>
+        </div>
+
+        <!-- Área -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h6 class="fw-bold text-center">Por Área</h6>
+                <canvas id="chartArea"></canvas>
+            </div>
+        </div>
+
+        <!-- Ranking responsables -->
+        <div class="col-md-12 mb-20">
+            <div class="card shadow-sm p-3">
+                <h6 class="fw-bold text-center">Top 5 Responsables</h6>
+                <canvas id="chartRanking"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ============================
+     CHART.JS
+============================ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    // ============================
+    // DATOS DESDE DJANGO (JSON REAL)
+    // ============================
+    const estadoData = JSON.parse('{{ tareas_por_estado|escapejs }}');
+    const criticidadData = JSON.parse('{{ tareas_por_criticidad|escapejs }}');
+    const areaData = JSON.parse('{{ tareas_por_area|escapejs }}');
+    const responsableData = JSON.parse('{{ tareas_por_responsable|escapejs }}');
+    const creadasMesData = JSON.parse('{{ tareas_creadas_mes|escapejs }}');
+    const cerradasMesData = JSON.parse('{{ tareas_cerradas_mes|escapejs }}');
+    const rankingData = JSON.parse('{{ ranking_responsables|escapejs }}');
+
+    // ============================
+    // FUNCIÓN PARA EXTRAER LABELS Y VALORES
+    // ============================
+    function extract(data, field) {
+        return {
+            labels: data.map(item => item[field] || "Sin asignar"),
+            values: data.map(item => item.total)
+        };
+    }
+
+    function extractMonth(data) {
+        return {
+            labels: data.map(item => new Date(item.mes).toLocaleDateString("es-CL", { month: "short" })),
+            values: data.map(item => item.total)
+        };
+    }
+
+    // ============================
+    // GRÁFICOS
+    // ============================
+
+    // Creadas por mes
+    const cm = extractMonth(creadasMesData);
+    new Chart(document.getElementById("chartCreadasMes"), {
+        type: "line",
+        data: {
+            labels: cm.labels,
+            datasets: [{
+                label: "Creadas",
+                data: cm.values,
+                borderColor: "#0d6efd",
+                backgroundColor: "rgba(13,110,253,0.2)",
+                tension: 0.3
+            }]
+        }
+    });
+
+    // Cerradas por mes
+    const cc = extractMonth(cerradasMesData);
+    new Chart(document.getElementById("chartCerradasMes"), {
+        type: "line",
+        data: {
+            labels: cc.labels,
+            datasets: [{
+                label: "Cerradas",
+                data: cc.values,
+                borderColor: "#198754",
+                backgroundColor: "rgba(25,135,84,0.2)",
+                tension: 0.3
+            }]
+        }
+    });
+
+    // Estado
+    const e = extract(estadoData, "estado");
+    new Chart(document.getElementById("chartEstado"), {
+        type: "doughnut",
+        data: {
+            labels: e.labels,
+            datasets: [{
+                data: e.values,
+                backgroundColor: ["#6c757d", "#0d6efd", "#198754", "#dc3545"]
+            }]
+        }
+    });
+
+    // Criticidad
+    const c = extract(criticidadData, "criticidad");
+    new Chart(document.getElementById("chartCriticidad"), {
+        type: "doughnut",
+        data: {
+            labels: c.labels,
+            datasets: [{
+                data: c.values,
+                backgroundColor: ["#198754", "#ffc107", "#fd7e14", "#dc3545"]
+            }]
+        }
+    });
+
+    // Área
+    const a = extract(areaData, "area");
+    new Chart(document.getElementById("chartArea"), {
+        type: "bar",
+        data: {
+            labels: a.labels,
+            datasets: [{
+                label: "Tareas",
+                data: a.values,
+                backgroundColor: "#0d6efd"
+            }]
+        }
+    });
+
+    // Ranking responsables
+    new Chart(document.getElementById("chartRanking"), {
+        type: "bar",
+        data: {
+            labels: rankingData.map(item =>
+                `${item.responsable__first_name} ${item.responsable__last_name}`
+            ),
+            datasets: [{
+                label: "Tareas",
+                data: rankingData.map(item => item.total),
+                backgroundColor: "#6610f2"
+            }]
+        }
+    });
+
+</script>
+
+{% endblock %}

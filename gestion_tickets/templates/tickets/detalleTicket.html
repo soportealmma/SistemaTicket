@@ -1,0 +1,180 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Ticket #{{ ticket.id }}{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
+
+    <!-- TÍTULO -->
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">
+        Ticket #{{ ticket.id }}
+    </h2>
+
+    <!-- INFORMACIÓN DEL TICKET -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-gray-700">
+
+        <div>
+            <p><strong>Cliente:</strong> {{ ticket.cliente|default:"N/A" }}</p>
+            <p><strong>RUT:</strong> {{ ticket.rut_cliente|default:"N/A" }}</p>
+            <p><strong>Contacto:</strong> {{ ticket.contacto|default:"N/A" }}</p>
+            <p><strong>Correo:</strong> {{ ticket.correo|default:"N/A" }}</p>
+            <p><strong>Estado:</strong> {{ ticket.estado }}</p>
+            <p><strong>Tipo de Documento:</strong> {{ ticket.tipo_documento }}, Nro. {{ ticket.numero_documento }}</p>
+        </div>
+
+        <div>
+            <p><strong>Fecha de Creación:</strong> {{ ticket.fecha_creacion|date:"d M Y H:i" }}</p>
+            <p><strong>Fecha Respuesta:</strong> {{ ticket.fecha_respuesta|date:"d M Y H:i"|default:"N/A" }}</p>
+            <p><strong>Fecha Cierre:</strong> {{ ticket.fecha_cierre|date:"d M Y H:i"|default:"N/A" }}</p>
+        </div>
+
+    </div>
+
+    <!-- DESCRIPCIÓN DE LA FALLA -->
+    <div class="mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Descripción de la Falla:</h3>
+        <p class="bg-gray-100 p-4 rounded-md">{{ ticket.descripcion_falla|linebreaksbr }}</p>
+    </div>
+
+    <!-- OBSERVACIONES -->
+    {% if ticket.observaciones %}
+    <div class="mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Observaciones:</h3>
+        <p class="bg-gray-100 p-4 rounded-md">{{ ticket.observaciones|linebreaksbr }}</p>
+    </div>
+    {% endif %}
+
+    <!-- IMÁGENES DEL TICKET -->
+    {% for img in imagenes %}
+    <div class="container mb-3">
+        <div class="row gx-2 d-flex align-items-stretch">
+
+            <div class="col-4">
+                <div class="p-3 border bg-light h-100 d-flex justify-content-center align-items-center">
+                    <img src="{{ img.imagen.url }}" style="width: 80%; height: auto;" alt="">
+                </div>
+            </div>
+
+            <div class="col-8">
+                <div class="p-3 border bg-light h-100">
+                    {% if img.descripcion %}
+                        {{ img.descripcion }}
+                    {% else %}
+                        <p class="text-center text-muted">No hay descripción de la imagen</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- HISTORIAL DE MENSAJES -->
+    <div class="mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Historial de Mensajes:</h3>
+
+        {% if mensajes %}
+            <div class="space-y-4">
+                {% for mensaje in mensajes %}
+                    <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                        <p class="text-sm text-gray-500 mb-1">
+                            <strong>Generado por:</strong> {{ mensaje.usuario }}
+                        </p>
+                        <p class="text-sm text-gray-500 mb-1">
+                            <strong>Fecha:</strong> {{ mensaje.fecha_envio|date:"d M Y H:i" }}
+                        </p>
+                        <p class="text-gray-800">{{ mensaje.contenido|linebreaksbr }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-600">No hay mensajes para este ticket aún.</p>
+        {% endif %}
+    </div>
+
+    <!-- FORMULARIO PARA AGREGAR MENSAJE -->
+    {% if user.is_authenticated %}
+    <div class="mt-8 pt-6 border-t border-gray-200">
+
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Añadir Mensaje</h3>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold mb-2">Mensaje:</label>
+                <textarea name="contenido" rows="4" class="shadow border rounded w-full p-2"></textarea>
+            </div>
+
+            <div class="mb-4">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Crear Mensaje
+            </button>
+            </div>
+
+
+            {% if user.is_superuser or user.rol == "Staff" %}
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold mb-2">Estado:</label>
+                {{ update_form.estado }}
+            </div>
+            {% endif %}
+
+
+        </form>
+
+        <!-- CERRAR TICKET -->
+        {% if user.is_staff and ticket.estado != "cerrado" %}
+        <form method="post" action="{% url 'cerrar_ticket' ticket.id %}" class="mt-4">
+            {% csrf_token %}
+            <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Cerrar Ticket
+            </button>
+        </form>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+    <!-- ACCIONES: PDF + RMA -->
+    <div class="container mt-5">
+        <div class="row">
+
+            <!-- PDF -->
+            <div class="col-6">
+                <a href="{% url 'exportar_ticket_pdf' ticket.id %}" class="btn btn-danger" target="_blank">
+                    <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+                </a>
+            </div>
+
+            <!-- RMA -->
+            <div class="col-6 text-end">
+
+                {% if user.is_staff %}
+
+                    {% if rma %}
+                        <span class="badge bg-success">RMA Generado</span>
+
+                        <a href="{% url 'detalle_rma' rma.id %}" class="btn btn-warning ms-2">
+                            Ver Detalle RMA
+                        </a>
+
+                    {% else %}
+                        <span class="badge bg-secondary">Sin RMA</span>
+
+                        <a href="{% url 'crear_rma_desde_ticket' ticket.id %}" class="btn btn-success ms-2">
+                            Generar RMA
+                        </a>
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+
+
+
+{% block content %}
+
+
+<h2>Se encontraron varias llaves para "{{ q }}"</h2>
+
+<p>Selecciona la llave correcta:</p>
+
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Número de Serie</th>
+        <th>Cliente</th>
+        <th>Acción</th>
+    </tr>
+
+    {% for l in coincidencias %}
+    <tr>
+        <td>{{ l.numero_serie }}</td>
+        <td>{{ l.cliente }}</td>
+        <td>
+            <a href="{% url 'crear_llave' %}?seleccion={{ l.id }}">
+                Usar esta
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<a href="{% url 'crear_llave' %}">Volver</a>
+
+
+
+{% endblock %}

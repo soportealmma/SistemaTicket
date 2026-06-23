@@ -1,0 +1,22 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+
+<div class="container mt-4">
+
+    <h2 class="fw-bold mb-3">
+        {% if equipo %}Editar Equipo{% else %}Crear Equipo{% endif %}
+    </h2>
+
+    <form method="POST" class="mb-20">
+        {% csrf_token %}
+        {{ form | crispy }}
+
+        <button class="btn btn-success">Guardar</button>
+        <a href="{% url 'listar_equipos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+</div>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+este es detalle.html
+<div class="container">
+    <div class="row border border-light">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <h1><strong style="font:18px;">Detalle Solicitud de RMA</strong></h1>
+            <hr>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h3>Ticket de Origen: {{ solicitud.ticket_origen }}</h3>
+                </div>
+                <hr>
+                <p class="text-muted mb-3">
+                Estado: <span class="badge bg-info">{{ solicitud.get_estado_display }}</span>
+                </p>
+                            <!-- Datos del Cliente -->
+                <div class="card mb-3">
+                    <div class="card-header fw-bold">Datos del Cliente</div>
+                    <div class="card-body">
+                        <p><strong>Nro. de solicitud de RMA:</strong> {{ solicitud.numero_rma }}</p>
+                        <p><strong>Cliente:</strong> {{ solicitud.cliente }}</p>
+                        <p><strong>RUT:</strong> {{ solicitud.rut_cliente }}</p>
+                        <p><strong>Contacto:</strong> {{ solicitud.contacto }}</p>
+                        <p><strong>Teléfono:</strong> {{ solicitud.telefono }}</p>
+                        <p><strong>Correo:</strong> {{ solicitud.correo }}</p>
+                        <p><strong>Dirección:</strong> {{ solicitud.direccion }}</p>
+                        <p><strong>Ciudad / País:</strong> {{ solicitud.ciudad }}</p>
+                    </div>
+                </div>
+                            <!-- Datos del Producto -->
+                <div class="card mb-3">
+                    <div class="card-header fw-bold">Datos del Producto</div>
+                    <div class="card-body">
+                        <p><strong>Tipo de equipo:</strong> {{ solicitud.tipo_equipo }}</p>
+                        <p><strong>Fabricante:</strong> {{ solicitud.fabricante }}</p>
+                        <p><strong>Modelo:</strong> {{ solicitud.modelo }}</p>
+                        <p><strong>N° Serie:</strong> {{ solicitud.numero_serie }}</p>
+                        <p><strong>Garantía:</strong> {{ solicitud.en_garantia|yesno:"Sí,No" }}</p>
+                        <p><strong>Tipo Documento:</strong> {{ solicitud.tipo_documento }}</p>
+                        <p><strong>Número Documento:</strong> {{ solicitud.numero_documento }}</p>
+                    </div>
+                </div>
+                            <!-- Motivo -->
+                <div class="card mb-3">
+                    <div class="card-header fw-bold">Motivo de Solicitud</div>
+                    <div class="card-body">
+                        <p><strong>Descripción de falla:</strong> {{ solicitud.descripcion_falla }}</p>
+                        <p><strong>Observaciones:</strong> {{ solicitud.observaciones|default:"Sin observaciones." }}</p>
+                    </div>
+                </div>
+
+                             <!-- IMAGENES -->
+                <div class="card mb-3">
+                    <div class="card-header fw-bold">Registro de Imágenes</div>
+                    <div class="card-body">
+                        {% for img in imagenes %}
+                        <div class="container mb-3">
+                            <div class="row gx-2 d-flex align-items-stretch">
+
+                                <!-- Imagen -->
+                                <div class="col-4">
+                                    <div class="p-3 border bg-light h-100 d-flex justify-content-center align-items-center">
+                                        
+                                        <img src="{{ img.imagen.url }}" style="width: 80%; height: auto;" alt="">
+                                    </div>
+                                </div>
+
+                                <!-- Descripción -->
+                                <div class="col-8">
+                                    <div class="p-3 border bg-light h-100">
+                                        {% if img.descripcion %}
+                                            {{ img.descripcion }}
+                                        {% else %}
+                                            <p class="text-center text-muted">No hay descripción de la imagen</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                            <!-- Condiciones de ingreso -->
+                <div class="card mb-3">
+                    <div class="card-header fw-bold">Condiciones de ingreso</div>
+                    <div class="card-body">
+                        <p><strong>Empaque del equipo:</strong> {{ solicitud.sellos_intactos }}</p>
+                        <p><strong>Accesorios:</strong> {{ solicitud.accesorios_recibidos }}</p>
+                    </div>
+                </div>
+                            <!-- Resolución -->
+                {% if resolucion %}
+                    <div class="card mb-3">
+                        <div class="card-header fw-bold">Resolución Técnica</div>
+                        <div class="card-body">
+                            
+                            <p><strong>Ingeniero / Técnico:</strong> {{ resolucion.ingeniero_responsable }}</p>
+                            <br>
+                            <p><strong>Diagnóstico:</strong> {{ resolucion.diagnostico }}</p>
+                            <br>
+                            <p><strong>Observaciones:</strong> {{ resolucion.observaciones }}</p>
+                            <br>
+                            <p><strong>Causa raíz:</strong> {{ resolucion.causa_raiz }}</p>
+                            <br>
+                            <p><strong>Garantía:</strong> {{ resolucion.aplica_garantia }}</p>
+                            <br>
+                            <p><strong>Motivo rechazo:</strong> {{ resolucion.motivo_no_garantia }}</p>
+                            <br>
+                            <p><strong>Fecha cierre:</strong> {{ resolucion.fecha_cierre }}</p>
+
+                            
+                        </div>
+
+                    </div>
+
+                {% else %}
+                <div class="alert alert-warning">
+                    Esta solicitud aún no tiene resolución técnica registrada.
+                    <br>
+                    <a href="{% url 'crear_resolucion_desde_rma' solicitud.id %}" class="btn btn-success mt-2">
+                        Generar Resolución
+                    </a>
+                </div>
+                 {% endif %}
+
+
+        </div>
+        <div class="col-2">
+            <div style="padding: 20px;">
+                <a href="{% url 'listar_rma' %}" class="btn btn-secondary btn-sm">Volver</a>
+                <br>
+
+            </div>
+            <div style="padding: 20px;">
+                 <a href="{% url 'exportar_rma_pdf' solicitud.id %}" class="btn btn-danger" target="_blank">Exportar a PDF</a>
+            </div>
+                {% if user.is_staff %}
+                    {% if resolucion %}
+                        <div class="btn btn">
+                            <a href="{% url 'detalle_resolucion_rma' resolucion.id %}" class="btn btn-primary mt-2">
+                                Ver / Editar Resolución
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="btn btn">
+                            <a href="{% url 'crear_resolucion_desde_rma' solicitud.id %}" class="btn btn-success mt-2">
+                                Crear Resolución
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}

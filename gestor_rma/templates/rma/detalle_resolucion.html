@@ -1,0 +1,93 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Nro. Resolución RMA #{{ resolucion.numero_resolucion }}</h3>
+        <a href="{% url 'detalle_rma' resolucion.solicitud.id %}" class="btn btn-secondary btn-sm">Volver a Solicitud</a>
+    </div>
+
+    <p class="text-muted">
+        <strong>Nro. Solicitud RMA:</strong> {{ resolucion.solicitud.numero_rma }}  
+        <br>
+        <strong>Cliente:</strong> {{ resolucion.solicitud.cliente }}
+        <br>
+        <strong>Equipo:</strong> {{ resolucion.solicitud.tipo_equipo }} / {{ resolucion.solicitud.modelo }}
+    </p>
+
+    <div class="row">
+
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="col-lg-6">
+
+            <!-- Datos del Diagnóstico -->
+            <div class="card mb-3">
+                <div class="card-header fw-bold">Diagnóstico Técnico</div>
+                <div class="card-body">
+                    <p><strong>Ingeniero Responsable:</strong> {{ resolucion.ingeniero_responsable }}</p>
+                    <p><strong>Condición Física:</strong> {{ resolucion.get_condicion_fisica_display }}</p>
+                    <p><strong>Sellos Intactos:</strong> {{ resolucion.get_sellos_intactos_display }}</p>
+                    <p><strong>Accesorios Recibidos:</strong> {{ resolucion.get_accesorios_recibidos_display }}</p>
+                    <p><strong>Descripción de Falla:</strong><br>{{ resolucion.descripcion_falla|linebreaks }}</p>
+                    <p><strong>Observaciones:</strong><br>{{ resolucion.observaciones|linebreaks }}</p>
+                </div>
+            </div>
+
+            <!-- Causa y Diagnóstico -->
+            <div class="card mb-3">
+                <div class="card-header fw-bold">Causa y Diagnóstico</div>
+                <div class="card-body">
+                    <p><strong>Diagnóstico:</strong> {{ resolucion.diagnostico }}</p>
+                    <p><strong>Causa Raíz:</strong><br>{{ resolucion.causa_raiz|linebreaks }}</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- COLUMNA DERECHA -->
+        <div class="col-lg-6">
+
+            <!-- Garantía -->
+            <div class="card mb-3">
+                <div class="card-header fw-bold">Resultado de Garantía</div>
+                <div class="card-body">
+                    <p><strong>Aplicación de Garantía:</strong> {{ resolucion.get_aplica_garantia_display }}</p>
+
+                    {% if resolucion.motivo_no_garantia %}
+                    <p><strong>Motivo de Rechazo:</strong><br>{{ resolucion.motivo_no_garantia|linebreaks }}</p>
+                    {% endif %}
+
+                    <p><strong>Fecha de Cierre:</strong> {{ resolucion.fecha_cierre|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+
+            <!-- Imágenes -->
+            <div class="card mb-3">
+                <div class="card-header fw-bold">Imágenes Asociadas</div>
+                <div class="card-body">
+
+                    {% if resolucion.solicitud.imagenes.all %}
+                        {% for img in resolucion.solicitud.imagenes.all %}
+                            <div class="mb-3">
+                                <img src="{{ img.imagen.url }}" class="img-fluid rounded border">
+                                <p class="mt-1 text-muted">{{ img.descripcion }}</p>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No hay imágenes asociadas a esta resolución.</p>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <a href="{% url 'exportar_rma_pdf' resolucion.solicitud.id %}" class="btn btn-danger" target="_blank">
+                Exportar a PDF
+            </a>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

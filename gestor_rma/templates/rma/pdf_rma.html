@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+
+<style>
+
+    /* ============================
+       CONFIGURACIÓN GENERAL
+    ============================ */
+    @page {
+        size: letter;
+        margin: 2cm;
+
+        @bottom-center {
+            content: "Documento generado automáticamente – Grupo Almma";
+            font-size: 10px;
+            color: #666;
+        }
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    h2 {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-align: center;
+    }
+
+    h3 {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 25px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 4px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 12px;
+    }
+
+    table td, table th {
+        padding: 6px;
+        vertical-align: top;
+    }
+
+    table tr:nth-child(even) {
+        background: #f5f5f5;
+    }
+
+    .box {
+        border: 1px solid #bbb;
+        padding: 10px;
+        border-radius: 4px;
+        background: #fafafa;
+        white-space: pre-wrap;
+    }
+
+    /* ============================
+       IMÁGENES (ESTILO TICKET)
+    ============================ */
+    .img-block {
+        page-break-inside: avoid;
+        margin-bottom: 15px;
+    }
+
+    .img-box {
+        border: 1px solid #ddd;
+        background: #f8f9fa;
+        padding: 10px;
+        height: 100%;
+        text-align: center;
+    }
+
+    .img-box img {
+        width: 80%;
+        height: auto;
+    }
+
+    .img-desc {
+        border: 1px solid #ddd;
+        background: #f8f9fa;
+        padding: 10px;
+        height: 100%;
+    }
+
+    /* HISTORIAL */
+    .msg-block {
+        page-break-inside: avoid;
+        border: 1px solid #ddd;
+        background: #f8f9fa;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }    
+
+</style>
+
+</head>
+<body>
+
+    <!-- ENCABEZADO CORPORATIVO -->
+    <table style="width:100%; border-bottom: 2px solid #004080; margin-bottom:15px;">
+        <tr>
+            <td style="width:50%;">
+                <img src="{% static 'admin/img/logodoc.png' %}" style="width:230px;">
+            </td>
+            <td style="width:50%; text-align:right; font-size:12px; color:#004080;">
+                <strong>Grupo Almma</strong><br>
+                Comercializadora Importadora y Exportadora<br>
+                www.grupoalmma.cl<br>
+                soporte@grupoalmma.cl
+            </td>
+        </tr>
+    </table>
+
+    <!-- TÍTULO -->
+    <h2>Número de Solicitud #{{ solicitud.numero_rma }}</h2>
+    <p style="text-align:center;">
+        <strong>Fecha de Creación:</strong> {{ solicitud.fecha_creacion|date:"d/m/Y H:i" }}
+    </p>
+
+    <!-- DATOS DEL CLIENTE -->
+    <h3>Datos del Cliente</h3>
+    <table>
+        <tr><th>Cliente:</th><td>{{ solicitud.cliente }}</td></tr>
+        <tr><th>RUT:</th><td>{{ solicitud.rut_cliente }}</td></tr>
+        <tr><th>Contacto:</th><td>{{ solicitud.contacto }}</td></tr>
+        <tr><th>Teléfono:</th><td>{{ solicitud.telefono }}</td></tr>
+        <tr><th>Correo:</th><td>{{ solicitud.correo }}</td></tr>
+        <tr><th>Dirección:</th><td>{{ solicitud.direccion }}</td></tr>
+        <tr><th>Ciudad / País:</th><td>{{ solicitud.ciudad }}</td></tr>
+    </table>
+
+    <!-- DATOS DEL PRODUCTO -->
+    <h3>Datos del Producto</h3>
+    <table>
+        <tr><th>Tipo de Equipo:</th><td>{{ solicitud.tipo_equipo }}</td></tr>
+        <tr><th>Fabricante:</th><td>{{ solicitud.fabricante }}</td></tr>
+        <tr><th>Modelo:</th><td>{{ solicitud.modelo }}</td></tr>
+        <tr><th>N° Serie:</th><td>{{ solicitud.numero_serie }}</td></tr>
+        <tr><th>Garantía:</th><td>{{ solicitud.en_garantia|yesno:"Sí,No" }}</td></tr>
+        <tr><th>Documento:</th><td>{{ solicitud.tipo_documento }} #{{ solicitud.numero_documento }}</td></tr>
+    </table>
+
+    <!-- MOTIVO -->
+    <h3>Motivo de Solicitud</h3>
+    <div class="box">
+        {{ solicitud.descripcion_falla|linebreaksbr }}
+    </div>
+
+    <h3>Observaciones</h3>
+    <div class="box">
+        {{ solicitud.observaciones|default:"Sin observaciones." }}
+    </div>
+
+    <!-- IMÁGENES (ESTILO TICKET) -->
+    <h3>Registro de Imágenes</h3>
+
+        {% for img in imagenes %}
+        <div class="container mb-4">
+            <div class="row gx-3 d-flex align-items-stretch justify-content-center">
+
+                <!-- Imagen -->
+                <div class="col-4">
+                    <div class="p-3 border bg-light h-100 d-flex justify-content-center align-items-center rounded">
+                        <img src="{{ img.imagen.url }}" style="width: 80%; height: auto;" alt="">
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="col-8">
+                    <div class="p-3 border bg-light h-100 rounded">
+                        {% if img.descripcion %}
+                            {{ img.descripcion }}
+                        {% else %}
+                            <p class="text-center text-muted">Sin descripción</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Columna vacía para centrar -->
+                <div class="col-4"></div>
+
+            </div>
+        </div>
+        {% endfor %}
+
+    <!-- RESOLUCIÓN -->
+    {% if resolucion %}
+        <h3>Resolución Técnica</h3>
+
+        <table>
+            <tr><th>N° Resolución:</th><td>{{ resolucion.numero_resolucion }}</td></tr>
+            <tr><th>Ingeniero Responsable:</th><td>{{ resolucion.ingeniero_responsable }}</td></tr>
+            <tr><th>Garantía:</th><td>{{ resolucion.get_aplica_garantia_display }}</td></tr>
+            <tr><th>Motivo Rechazo:</th><td>{{ resolucion.motivo_no_garantia }}</td></tr>
+            <tr><th>Fecha Cierre:</th><td>{{ resolucion.fecha_cierre|date:"d/m/Y H:i" }}</td></tr>
+        </table>
+
+        <h3>Diagnóstico</h3>
+        <div class="box">{{ resolucion.diagnostico|linebreaksbr }}</div>
+
+        <h3>Observaciones</h3>
+        <div class="box">{{ resolucion.observaciones|linebreaksbr }}</div>
+
+        <h3>Causa Raíz</h3>
+        <div class="box">{{ resolucion.causa_raiz|linebreaksbr }}</div>
+    {% endif %}
+
+    <div class="container mb-10">
+        <div class="row">
+            <div class="col-6">
+                <p>Firma Grupo Almma</p>
+            </div>
+            <div class="col-6">
+                <p>Firma Cliente</p>
+            </div>
+        </div>
+        
+    </div>
+    <!-- PIE -->
+    <br><br>
+    <p style="text-align:center; font-size:12px; color:#004080;">
+        <strong>Grupo Almma – Área de Soporte Técnico</strong><br>
+        www.grupoalmma.cl – soporte@grupoalmma.cl
+    </p>
+
+</body>
+</html>

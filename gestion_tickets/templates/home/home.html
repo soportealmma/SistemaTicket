@@ -1,0 +1,152 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+
+
+{% block title %}Bienvenido a Grupo Almma{% endblock %}
+
+{% block content %}
+
+
+{% csrf_token %}
+
+<body class="d-flex flex-column min-vh-100">
+    
+
+<div class="container container-fluid justify-content-center">
+    
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Bienvenido a Grupo Almma</h1>
+        <p class="text-lg text-gray-600">Tu solución integral para todas tus necesidades de soporte.</p>
+    </div>
+
+    <div id="carouselExampleCaptions" class="carousel slide text-center rounded-lg" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="4" aria-label="Slide 4"></button>
+        </div>
+        <div class="carousel-inner rounded-md" style="height: 400px;" >
+            <div class="carousel-item active rounded-md">
+            <img src="{% static '/admin/img/banner1.jpg' %}" class="img-fluid" alt="d-md-block h-50">
+            <div class="carousel-caption d-none d-md-block" style="height: 400px;">
+                <h5>Soporte Rápido y Eficaz</h5>
+                <p>Nuestro equipo está listo para ayudarte con cualquier problema técnico.</p>
+            </div>
+            </div>
+            <div class="carousel-item rounded-md" >
+            <img src="{% static '/admin/img/banner2.jpg' %}" class="img-fluid" alt="d-md-block h-50">
+            <div class="carousel-caption d-none d-md-block" style="height: 400px;">
+                <h5>Asistencia Personalizada</h5>
+                <p>Soluciones a medida para tus necesidades específicas.</p>
+            </div>
+            </div>
+            <div class="carousel-item rounded-md">
+            <img src="{% static '/admin/img/banner3.jpg' %}" class="img-fluid" alt="d-md-block h-50">
+            <div class="carousel-caption d-none d-md-block" style="height: 400px;">
+                <h5>Disponibilidad 24/7</h5>
+                <p>Siempre estamos aquí para apoyarte, en cualquier momento y lugar.</p>
+            </div>
+            </div>
+            <div class="carousel-item rounded-md">
+            <img src="{% static '/admin/img/banner4.jpg' %}" class="img-fluid" alt="d-md-block h-50">
+            <div class="carousel-caption d-none d-md-block" style="height: 400px;">
+                <h5>Disponibilidad 24/7</h5>
+                <p>Siempre estamos aquí para apoyarte, en cualquier momento y lugar.</p>
+            </div>
+            </div>
+            <div class="carousel-item rounded-md">
+            <img src="{% static '/admin/img/banner5.jpg' %}" class="img-fluid" alt="d-md-block h-50">
+            <div class="carousel-caption d-none d-md-block" style="height: 400px;">
+                <h5>Disponibilidad 24/7</h5>
+                <p>Siempre estamos aquí para apoyarte, en cualquier momento y lugar.</p>
+            </div>
+            </div>
+        </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
+        </div>
+    </div>
+    <br>
+
+
+<!-- Sección de Acciones Rápidas -->
+    <div class=" my-16">
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-bold text-slate-800">Panel de Control de Usuario</h1>
+        <div class="w-20 h-1 bg-blue-600 mx-auto mt-2"></div>
+    </div>
+
+    <div class="container-fluid align-items center row g-6">
+        <div class="col-md-4">
+            <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-2xl transition-all border-t-4 border-blue-600 group">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
+                    <i class="bi bi-plus-circle text-blue-600 group-hover:text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Envía un Ticket</h3>
+                <p class="text-gray-500 mb-6 small">Reporta un problema técnico o solicita un nuevo servicio.</p>
+                <a href="{% url 'crear_ticket' %}" class="btn btn-primary w-100 py-2 rounded-lg">Crear Ticket</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-2xl transition-all border-t-4 border-green-600 group">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
+                    <i class="bi bi-search text-green-600 group-hover:text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Revisa el Estado</h3>
+                <p class="text-gray-500 mb-6 small">Sigue el progreso de tus tickets abiertos y cerrados.</p>
+                <a href="{% url 'listar_ticket' %}" class="btn btn-success w-100 py-2 rounded-lg">Ver mis Tickets</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-2xl transition-all border-t-4 border-purple-600 group">
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
+                    <i class="bi bi-journal-text text-purple-600 group-hover:text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Base de Conocimientos</h3>
+                <p class="text-gray-500 mb-6 small">Manuales y tutoriales para resolver dudas frecuentes.</p>
+                <a href="#" class="btn btn-secondary w-100 py-2 rounded-lg" style="background-color: #6b21a8; border:none;">Explorar Artículos</a>
+            </div>
+        </div>
+    </div>
+
+
+        
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const carouselItems = document.querySelectorAll('#imageCarousel .carousel-item');
+        let currentIndex = 0;
+
+        function showNextImage() {
+            carouselItems[currentIndex].classList.remove('opacity-100');
+            carouselItems[currentIndex].classList.add('opacity-0');
+            currentIndex = (currentIndex + 1) % carouselItems.length;
+            carouselItems[currentIndex].classList.remove('opacity-0');
+            carouselItems[currentIndex].classList.add('opacity-100');
+        }
+
+        carouselItems.forEach(item => {
+            const interval = item.dataset.interval;
+            if (interval) {
+                setInterval(showNextImage, parseInt(interval));
+            }
+        });
+    });
+</script>
+
+</body>
+
+{% endblock %}

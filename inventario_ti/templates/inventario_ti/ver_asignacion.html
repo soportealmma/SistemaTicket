@@ -1,0 +1,39 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h3 class="fw-bold mb-3">Detalle de Asignación</h3>
+
+    <p><strong>Responsable:</strong> {{ asignacion.persona }} {{asignacion.persona.last_name}}</p>
+    <p><strong>Fecha de Asignación:</strong> {{ asignacion.fecha_inicio }}</p>
+    <p><strong>Fecha término:</strong> {{ asignacion.fecha_termino|default:"No Aplica" }}</p>
+    <p><strong>Motivo término:</strong> {{ asignacion.motivo_termino|default:"No Aplica" }}</p>
+    <p><strong>Observaciones:</strong> {{ asignacion.observaciones|default:"Sin Observaciones" }}</p>
+
+    <hr>
+
+    {% if asignacion.equipo %}
+        <h5>Equipo asignado</h5>
+        <p>{{ asignacion.equipo }}</p>
+    {% endif %}
+
+    {% if asignacion.celular %}
+        <h5>Celular asignado</h5>
+        <p>{{ asignacion.celular }}</p>
+    {% endif %}
+
+    {% if asignacion.licencia %}
+        <h5>Licencia asignada</h5>
+        <p>{{ asignacion.licencia }}</p>
+    {% endif %}
+
+    <hr>
+
+    <a href="{% url 'editar_asignacion' asignacion.id %}" class="btn btn-warning">Editar</a>
+    <a href="{% url 'generar_documento_entrega' asignacion.persona.id %}" class="btn btn-info">PDF</a>
+    <a href="{% url 'listar_asignaciones' %}" class="btn btn-secondary">Volver</a>
+
+</div>
+{% endblock %}

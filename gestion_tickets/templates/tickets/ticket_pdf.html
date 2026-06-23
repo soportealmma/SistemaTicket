@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="{% static 'admin/css/bootstrap.css' %}">
+
+<style>
+
+    @page {
+        size: letter;
+        margin: 2cm;
+
+        @bottom-center {
+            content: "Documento generado automáticamente – Grupo Almma";
+            font-size: 10px;
+            color: #666;
+        }
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    h2 {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    h3 {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 25px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 4px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 12px;
+    }
+
+    table td, table th {
+        padding: 6px;
+        vertical-align: top;
+    }
+
+    table tr:nth-child(even) {
+        background: #f5f5f5;
+    }
+
+    .descripcion-box {
+        border: 1px solid #bbb;
+        padding: 10px;
+        border-radius: 4px;
+        background: #fafafa;
+        white-space: pre-wrap;
+    }
+
+    /* BLOQUE DE IMAGENES (tu estilo original) */
+    .img-block {
+        page-break-inside: avoid;
+        margin-bottom: 15px;
+    }
+
+    .img-box {
+        border: 1px solid #ddd;
+        background: #f8f9fa;
+        padding: 10px;
+        height: 100%;
+        text-align: center;
+    }
+
+    .img-box img {
+        width: 80%;
+        height: auto;
+    }
+
+    .img-desc {
+        border: 1px solid #ddd;
+        background: #f8f9fa;
+        padding: 10px;
+        height: 100%;
+    }
+
+    /* HISTORIAL */
+    .msg-block {
+        page-break-inside: avoid;
+        border: 1px solid #ddd;
+        background: #f8f9fa;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+
+</style>
+
+</head>
+<body>
+
+    <!-- ENCABEZADO -->
+    <table style="width:100%; border-bottom: 2px solid #004080; margin-bottom:15px;">
+        <tr>
+            <td style="width:50%;">
+                <img src="{% static 'admin/img/logodoc.png' %}" style="width:230px;">
+            </td>
+            <td style="width:50%; text-align:right; font-size:12px; color:#004080;">
+                <strong>Grupo Almma</strong><br>
+                Comercializadora Importadora y Exportadora<br>
+                www.grupoalmma.cl<br>
+                soporte@grupoalmma.cl
+            </td>
+        </tr>
+    </table>
+
+    <!-- TÍTULO -->
+    <h2>Reporte de Ticket #{{ ticket.id }}</h2>
+    <p><strong>Fecha de Creación:</strong> {{ ticket.fecha_creacion|date:"d/m/Y H:i" }}</p>
+
+    <!-- DATOS DEL CLIENTE -->
+    <h3>Datos del Cliente</h3>
+
+    <table>
+        <tr><th>Cliente:</th><td>{{ ticket.cliente }}</td></tr>
+        <tr><th>RUT:</th><td>{{ ticket.rut_cliente }}</td></tr>
+        <tr><th>Correo:</th><td>{{ ticket.correo }}</td></tr>
+        <tr><th>Teléfono:</th><td>{{ ticket.telefono }}</td></tr>
+        <tr><th>Fabricante:</th><td>{{ ticket.fabricante }}</td></tr>
+        <tr><th>Modelo:</th><td>{{ ticket.modelo }}</td></tr>
+        <tr><th>Número de Serie:</th><td>{{ ticket.numero_serie }}</td></tr>
+    </table>
+
+    <!-- DESCRIPCIÓN -->
+    <h3>Descripción del Problema</h3>
+    <div class="descripcion-box">
+        {{ ticket.descripcion_falla|linebreaksbr }}
+    </div>
+
+    <!-- IMÁGENES (TU ESTILO ORIGINAL) -->
+    <h3>Imágenes Asociadas</h3>
+
+    {% for img in imagenes %}
+    <div class="container img-block">
+        <div class="row gx-2 d-flex align-items-stretch">
+
+            <div class="col-4">
+                <div class="img-box">
+                    <img src="{{ img.imagen.url }}" alt="">
+                </div>
+            </div>
+
+            <div class="col-8">
+                <div class="img-desc">
+                    {% if img.descripcion %}
+                        {{ img.descripcion }}
+                    {% else %}
+                        <p class="text-muted text-center">No hay descripción de la imagen</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- HISTORIAL DE MENSAJES -->
+    <h3>Historial de Mensajes</h3>
+
+    {% if mensajes %}
+        {% for m in mensajes %}
+            <div class="msg-block">
+                <p><strong>Generado por:</strong> {{ m.usuario }}</p>
+                <p><strong>Fecha:</strong> {{ m.fecha_envio|date:"d/m/Y H:i" }}</p>
+                <p>{{ m.contenido|linebreaksbr }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No hay mensajes registrados para este ticket.</p>
+    {% endif %}
+
+    <!-- PIE -->
+    <br><br>
+    <p style="font-size:12px; color:#004080;">
+        <strong>Grupo Almma</strong><br>
+        Área de Soporte Técnico<br>
+        www.grupoalmma.cl – soporte@grupoalmma.cl
+    </p>
+
+    <hr>
+
+    <footer>
+        <p style="text-align:center; font-size:12px; margin-top:10px;">
+            Documento generado automáticamente – Fecha de Emisión: {% now "d/m/Y H:i" %}
+        </p>
+    </footer>
+
+</body>
+</html>

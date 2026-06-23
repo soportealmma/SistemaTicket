@@ -1,0 +1,82 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Editar Resolución RMA #{{ resolucion.numero_resolucion }}</h3>
+        <a href="{% url 'detalle_resolucion_rma' resolucion.id %}" class="btn btn-secondary btn-sm">Volver</a>
+    </div>
+
+    <p class="text-muted">
+        <strong>Solicitud RMA:</strong> {{ resolucion.solicitud.numero_rma }}<br>
+        <strong>Cliente:</strong> {{ resolucion.solicitud.cliente }}<br>
+        <strong>Equipo:</strong> {{ resolucion.solicitud.tipo_equipo }} / {{ resolucion.solicitud.modelo }}
+    </p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="card mb-3">
+            <div class="card-header fw-bold">Datos del Diagnóstico</div>
+            <div class="card-body">
+                {{ form.ingeniero_responsable|as_crispy_field }}
+                {{ form.condicion_fisica|as_crispy_field }}
+                {{ form.sellos_intactos|as_crispy_field }}
+                {{ form.accesorios_recibidos|as_crispy_field }}
+                {{ form.descripcion_falla|as_crispy_field }}
+                {{ form.observaciones|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header fw-bold">Diagnóstico y Causa Raíz</div>
+            <div class="card-body">
+                {{ form.diagnostico|as_crispy_field }}
+                {{ form.causa_raiz|as_crispy_field }}
+            </div>
+        </div>
+
+
+
+        <div class="card mb-3">
+            <div class="card-header fw-bold">Garantía</div>
+            <div class="card-body">
+                {{ form.aplica_garantia|as_crispy_field }}
+                {{ form.motivo_no_garantia|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header fw-bold">Imágenes Asociadas</div>
+            <div class="card-body">
+
+                {% if resolucion.solicitud.imagenes.all %}
+                    <p class="text-muted">Imágenes actuales:</p>
+                    <div class="row">
+                        {% for img in resolucion.solicitud.imagenes.all %}
+                            <div class="col-md-4 mb-3">
+                                <img src="{{ img.imagen.url }}" class="img-fluid rounded border shadow-sm">
+                                <p class="small text-muted">{{ img.descripcion }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <label class="mt-2 fw-bold">Agregar nuevas imágenes:</label>
+                <input type="file" name="imagenes" multiple class="form-control">
+                <small class="text-muted">Puedes subir varias imágenes a la vez.</small>
+
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{% url 'detalle_resolucion_rma' resolucion.id %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'base/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Editar Solicitud RMA{% endblock %}
+
+{% block content %}
+
+<div class="container border border-light rounded-md mt-4">
+    <div class="row">
+        <div class="col-2"></div>
+
+        <div class="col-8">
+
+            <div class="text-center mb-4">
+                <h1 class="fw-bold">Editar Solicitud de RMA</h1>
+                <p class="text-muted">Modifique los datos del cliente, equipo o imágenes</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- FORMULARIO -->
+                <div class="row">
+                    {{ form|crispy }}
+                </div>
+
+                <hr>
+
+                <!-- ========================= -->
+                <!--   IMÁGENES ACTUALES       -->
+                <!-- ========================= -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <strong>Imágenes actuales</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        {% if imagenes %}
+                            {% for img in imagenes %}
+                                <div class="card mb-3 p-3 border">
+                                    <div class="row g-2">
+
+                                        <div class="col-md-4">
+                                            <img src="{{ img.imagen.url }}" class="img-fluid rounded border">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <p class="fw-bold">Descripción:</p>
+                                            <p>{{ img.descripcion|default:"Sin descripción" }}</p>
+                                        </div>
+
+                                        <div class="col-md-2 d-flex align-items-end">
+                                            <a href="{% url 'eliminar_imagen_rma' img.id %}" 
+                                               class="btn btn-danger btn-sm">
+                                                Eliminar
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">No hay imágenes registradas.</p>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                <!-- ========================= -->
+                <!--   AGREGAR NUEVAS IMÁGENES -->
+                <!-- ========================= -->
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header bg-dark text-white">
+                        <strong>Agregar nuevas imágenes</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div id="contenedor-imagenes"></div>
+
+                        <button type="button" class="btn btn-primary mt-3" onclick="agregarBloqueImagen()">
+                            + Agregar imagen
+                        </button>
+
+                    </div>
+                </div>
+
+                <!-- BOTONES -->
+                <div class="text-center mt-4 mb-4">
+                    <button type="submit" class="btn btn-success px-5">Guardar Cambios</button>
+                    <a href="{% url 'detalle_rma' solicitud.id %}" class="btn btn-secondary px-4">Cancelar</a>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="col-2"></div>
+    </div>
+</div>
+
+<script>
+let contador = 0;
+
+function agregarBloqueImagen() {
+    contador++;
+
+    const bloque = `
+        <div class="card mb-3 p-3 border" id="bloque-${contador}">
+            <div class="row g-2">
+
+                <div class="col-md-4">
+                    <label class="form-label">Imagen</label>
+                    <input type="file" name="imagen_${contador}" class="form-control" accept="image/*" required>
+                </div>
+
+                <div class="col-md-7">
+                    <label class="form-label">Descripción</label>
+                    <textarea name="descripcion_${contador}" class="form-control" rows="3"
+                              placeholder="Descripción de la imagen"></textarea>
+                </div>
+
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger" onclick="eliminarBloque(${contador})">
+                        X
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    `;
+
+    document.getElementById("contenedor-imagenes").insertAdjacentHTML("beforeend", bloque);
+}
+
+function eliminarBloque(id) {
+    document.getElementById(`bloque-${id}`).remove();
+}
+</script>
+
+{% endblock %}

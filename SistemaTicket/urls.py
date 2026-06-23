@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from gestion_tickets.views import home
 from django.contrib.auth import views as auth_views
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 
@@ -12,7 +13,11 @@ urlpatterns = [
     path('', home, name='home'),  # Redirigir a la vista de inicio
     path('', include('usuarios.urls')),
     path('', include('gestion_tickets.urls')),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('', include('gestor_rma.urls')),
+    path('', include('gestor_tareas.urls')),
+    path('login/', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
-   
-]
+    path("llaves/", include("gestion_llaves.urls")),
+    path("inventario/", include("inventario_ti.urls")),
+
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -26,7 +26,7 @@ def login_view(request):
                 form.add_error(None, 'Usuario o contraseña incorrectos')
     else:
         form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'login/login.html', {'form': form})
 
 
 

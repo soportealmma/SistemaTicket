@@ -1,0 +1,76 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Solicitudes RMA</h3>
+        <a href="{% url 'crear_solicitud_rma' %}" class="btn btn-primary">
+            Nueva Solicitud RMA
+        </a>
+    </div>
+
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Fecha / Hora</th>
+                <th>N° RMA</th>
+                <th>Cliente</th>
+                <th>Contacto</th>
+                <th>Equipo</th>
+                <th>Estado</th>
+                <th class="text-end">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rma in rmas %}
+            <tr>
+                <td>{{ rma.id }}</td>
+                <td>{{ rma.fecha_creacion|date:"d-m-y H:i" }}</td>
+                <td>{{ rma.numero_rma }}</td>
+                <td>{{ rma.cliente }}</td>
+                <td>{{ rma.contacto }}</td>
+                <td>{{ rma.tipo_equipo }} / {{ rma.modelo }}</td>
+
+                <td>
+                    {% if rma.estado == 'abierto' %}
+                        <span class="badge bg-warning text-dark">{{ rma.get_estado_display }}</span>
+                    {% elif rma.estado == 'en_revision' %}
+                        <span class="badge bg-info text-dark">{{ rma.get_estado_display }}</span>
+                    {% elif rma.estado == 'cerrado' %}
+                        <span class="badge bg-secondary">{{ rma.get_estado_display }}</span>
+                    {% else %}
+                        <span class="badge bg-danger">{{ rma.get_estado_display }}</span>
+                    {% endif %}
+                </td>
+
+                <!-- ACCIONES -->
+                <td class="text-end">
+
+                    <!-- Ver -->
+                    <a href="{% url 'detalle_rma' rma.id %}" 
+                       class="btn btn-sm btn-outline-primary me-1"
+                       title="Ver detalle">
+                        <i class="bi bi-eye"></i>
+                    </a>
+
+                    <!-- Editar -->
+                    <a href="{% url 'editar_solicitud_rma' rma.id %}" 
+                       class="btn btn-sm btn-outline-warning"
+                       title="Editar RMA">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="8" class="text-center text-muted">
+                    No hay solicitudes RMA registradas.
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

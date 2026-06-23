@@ -2,87 +2,68 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from usuarios.models import Usuario_soporte
-
+from mantenedor.models import cliente, Fabricante, Localidad
+from PIL import Image, ImageOps
 
 
 
 # Create your models here.
-
-
-
-class Fabricante(models.Model):
-    nombre = models.CharField(max_length=100, unique=True)
-    descripcion = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return self.nombre
-
-
-
-
-
 class Ticket(models.Model):
-    ESTADOS = (
-        ('abierto', 'Abierto'),
-        ('en_progreso', 'En Progreso'),
-        ('cerrado', 'Cerrado'),
-        ('pendiente', 'Pendiente de Información'),
-    )
-    PRIORIDADES = (
-        ('baja', 'Baja'),
-        ('media', 'Media'),
-        ('alta', 'Alta'),
-        ('critica', 'Crítica'),
-    )
-    SERVICIOS = (
-        ('reparación', 'Reparación'),
-        ('pruebas', 'Pruebas'),
-        ('garantía', 'Garantía'),
-        ('armado', 'Armado'),
-        ('diagnóstico', 'Diagnóstico'),
-        ('otro', 'Otro'),
-    )
 
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    asignado_a = models.ForeignKey(Usuario_soporte, on_delete=models.SET_NULL, null=True, blank=True, related_name='tickets_asignados', verbose_name="Asignado a")
-    fabricante = models.ForeignKey(Fabricante, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Fabricante")
-    asunto = models.CharField(max_length=255)
-    descripcion = models.TextField()
-    estado = models.CharField(max_length=20, choices=ESTADOS, default='abierto')
-    prioridad = models.CharField(max_length=20, choices=PRIORIDADES, default='Baja')
-    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Registro")
-    ultima_actualizacion = models.DateTimeField(auto_now=True)
-    fecha_respuesta_esperada = models.DateTimeField(blank=True, null=True, verbose_name="Fecha Límite de Respuesta")
-    fecha_cierre = models.DateTimeField(blank=True, null=True, verbose_name="Fecha de Cierre")
-    tipo_servicio = models.CharField(max_length=30, choices=SERVICIOS, default='diagnostico', verbose_name="Tipo de Servicio")
-    horas_respuesta = models.PositiveIntegerField()
-    horas_resolucion = models.PositiveIntegerField()
+    TIPO_DOCUMENTO_CHOICES = [
+        ("factura", "Factura"),
+        ("nota_venta", "Nota de Venta"),
+        ("otro", "Otro"),
+    ]
+
+    ESTADO_CHOICES = [
+        ("abierto", "Abierto"),
+        ("pendiente", "Pendiente"),
+        ("cerrado", "Cerrado"),
+    ]
+
+    # ============================
+    # A. Datos del Cliente
+    # ============================
+    cliente = models.ForeignKey(cliente, on_delete=models.SET_NULL, null=True, related_name="tickets")
+    rut_cliente = models.CharField(max_length=20)
+    contacto = models.CharField(max_length=200)
+    correo = models.EmailField(max_length=200)
+    telefono = models.CharField(max_length=50, null=True, blank=True)
+    direccion = models.CharField(max_length=255, null=True, blank=True)
+    ciudad = models.ForeignKey(Localidad, on_delete=models.SET_NULL, null=True, blank=True)
 
 
+    # ============================
+    # B. Datos Comerciales
+    # ============================
+    tipo_documento = models.CharField(max_length=20, choices=TIPO_DOCUMENTO_CHOICES, default="factura")
+    numero_documento = models.CharField(max_length=100, null=True, blank=True)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default="abierto")
+    en_garantia = models.BooleanField(default=False)
 
-    class Meta:
-        ordering = ['-fecha_creacion'] # Ordenar tickets por fecha de creación descendente
+    # ============================
+    # C. Datos Técnicos
+    # ============================
+    fabricante = models.ForeignKey(Fabricante, on_delete=models.SET_NULL, null=True, blank=True)
+    modelo = models.CharField(max_length=100, null=True, blank=True)
+    tipo_equipo = models.CharField(max_length=100, null=True, blank=True)
+    numero_serie = models.CharField(max_length=100, null=True, blank=True)
+    descripcion_falla = models.TextField(null=True, blank=True)
+    sellos_intactos = models.CharField(max_length=10, choices=[('cerrado','Cerrado'),('abierto','Abierto'),('na','N/A')])
+    accesorios_recibidos = models.CharField(max_length=10, choices=[('completo','Completo'),('incompleto','Incompleto'),('na','N/A')])
+    observaciones = models.TextField(blank=True)
 
+    # ============================
+    # D. Métricas
+    # ============================
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_respuesta = models.DateTimeField(null=True, blank=True)
+    fecha_cierre = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"Ticket #{self.id}: {self.asunto} ({self.estado})"
+        return f"Ticket {self.id}"
 
-    def cerrar_ticket(self):
-        self.estado = 'cerrado'
-        self.fecha_cierre = timezone.now()
-        self.save()
-
-    def horas_respuesta(self):
-        if self.fecha_cierre and self.fecha_creacion:
-            delta = self.fecha_cierre - self.fecha_creacion
-            return delta.total_seconds() / 3600  # Convertir a horas
-        return None
-    
-    def horas_resolucion(self):
-        if self.fecha_cierre and self.fecha_creacion:
-            delta = self.fecha_cierre - self.fecha_creacion
-            return delta.total_seconds() / 3600  # Convertir a horas
-        return None
     
 
 class Mensaje(models.Model):
@@ -97,3 +78,37 @@ class Mensaje(models.Model):
 
     def __str__(self):
         return f"Mensaje de {self.usuario} en Ticket #{self.ticket.id}"
+
+
+
+
+class TicketImagen(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="imagenes")
+    imagen = models.ImageField(upload_to="tickets/", null=True, blank=True)
+    descripcion = models.CharField(max_length=255, blank=True)
+    fecha_subida = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        img = Image.open(self.imagen.path)
+
+        # Convertir a RGB si es PNG o tiene canal alfa
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+
+        # Recortar bordes blancos automáticamente (opcional)
+        img = ImageOps.crop(img, border=5)
+
+        # Redimensionar a tamaño web
+        max_width = 900
+        max_height = 900
+        img.thumbnail((max_width, max_height), Image.LANCZOS)
+
+        # Guardar optimizada
+        img.save(self.imagen.path, format="JPEG", quality=85)
+
+    def __str__(self):
+        return f"Imagen Ticket {self.ticket.id}"
+
+

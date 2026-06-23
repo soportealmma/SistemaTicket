@@ -1,0 +1,45 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between mb-3">
+        <h3 class="fw-bold">Inventario TI — Equipos</h3>
+        <a href="{% url 'crear_equipo' %}" class="btn btn-primary">Agregar Equipo</a>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Tipo</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Serie</th>
+                <th>Responsable</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for e in equipos %}
+            <tr>
+                <td>{{ e.get_tipo_equipo_display }}</td>
+                <td>{{ e.marca }}</td>
+                <td>{{ e.modelo }}</td>
+                <td>{{ e.numero_serie }}</td>
+                <td>{{ e.responsable_actual }}</td>
+                <td>{{ e.estado_equipo }}</td>
+                <td>
+                    <a href="{% url 'editar_equipo' e.id %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'eliminar_equipo' e.id %}" class="btn btn-sm btn-danger"
+                       onclick="return confirm('¿Eliminar equipo?')">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

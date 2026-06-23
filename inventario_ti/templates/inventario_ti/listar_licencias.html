@@ -1,0 +1,47 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between mb-3">
+        <h3 class="fw-bold">Inventario TI — Licencias</h3>
+        <a href="{% url 'crear_licencia' %}" class="btn btn-primary">Agregar Licencia</a>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Tipo</th>
+                <th>Producto</th>
+                <th>Correo asociado</th>
+                <th>Responsable</th>
+                <th>Expira</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for l in licencias %}
+            <tr>
+                <td>{{ l.tipo_licencia }}</td>
+                <td>{{ l.producto }}</td>
+                <td>{{ l.correo_asociado }}</td>
+                <td>{{ l.responsable_actual }}</td>
+                <td>{{ l.fecha_expiracion }}</td>
+                <td class="text-center">
+                    <a href="{% url 'editar_licencia' l.id %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a href="{% url 'eliminar_licencia' l.id %}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('¿Eliminar esta licencia?')">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+{% endblock %}

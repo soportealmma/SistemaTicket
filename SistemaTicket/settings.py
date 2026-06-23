@@ -32,6 +32,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'usuarios',
     'gestion_tickets',
+    'gestion_llaves',
+    'gestor_tareas',
+    'gestor_rma',
+    'biblioteca',
+    'inventario_ti',
     'crispy_forms',
     'crispy_bootstrap5',
     'mantenedor',
@@ -65,13 +70,14 @@ ROOT_URLCONF = 'SistemaTicket.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'gestion_tickets.context_processors.contador_tickets',
             ],
         },
     },
@@ -132,7 +138,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 
-STATIC_URL = "static/"
+STATIC_URL = 'static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
