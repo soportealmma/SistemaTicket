@@ -123,14 +123,24 @@
                 <li><a class="dropdown-item" href="{% url 'listar_llaves' %}">Listar llaves Mircom</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><h6 class="dropdown-header">Inventario TI</h6></li>
-
                 <li><a class="dropdown-item" href="{% url 'listar_equipos' %}">Equipos TI</a></li>
                 <li><a class="dropdown-item" href="{% url 'listar_celulares' %}">Celulares</a></li>
                 <li><a class="dropdown-item" href="{% url 'listar_licencias' %}">Licencias</a></li>
                 <li><a class="dropdown-item" href="{% url 'listar_asignaciones' %}">Asignaciones</a></li>
+                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="mantenedorDropdown" role="button" data-bs-toggle="dropdown"><i class="bi bi-gear"></i> Mantenedor</a>
+                    <ul class="dropdown-menu" aria-labelledby="mantenedorDropdown">
+                        <li><h6 class="dropdown-header">Usuarios</h6></li>
+                        <li><a class="dropdown-item" href="{% url 'listar_usuarios' %}"><i class="bi bi-people"></i> Listado de Usuarios</a></li>
+                        <li><a class="dropdown-item" href="{% url 'crear_usuario' %}"><i class="bi bi-person-plus"></i> Crear Usuario</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Roles y Permisos</h6></li>
+                        <li><a class="dropdown-item" href="/admin/auth/group/"><i class="bi bi-shield-lock"></i> Grupos (Roles)</a></li>
+                        <li><a class="dropdown-item" href="/admin/auth/user/"><i class="bi bi-key"></i> Permisos Avanzados</a></li>
+                    </ul>
+                </li>
 
                 {% if user.is_staff %}
-                    <li ><a class="dropdown-item" href="#">Mantenedor</a></li>
+                    <li ><a class="dropdown-item" href="{% url 'dashboard_mantenedor' %}"><i class="bi bi-grid"></i> Mantenedor</a></li>
                     <li ><a class="dropdown-item" href="#">Dashboard</a></li>
                     <li ><a class="dropdown-item" href="/admin/">Admin</a></li>
                 {% endif %}

@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from usuarios.models import Usuario_soporte
 from mantenedor.models import cliente, Fabricante, Localidad
 from PIL import Image, ImageOps
 

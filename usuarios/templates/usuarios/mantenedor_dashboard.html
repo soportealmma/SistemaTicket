@@ -1,0 +1,78 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="fw-bold mb-4">Panel de Mantenedores</h2>
+
+    <div class="row g-4">
+
+        <!-- Usuarios -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people"></i> Usuarios</h5>
+                    <p class="card-text">Administración de usuarios, roles y perfiles.</p>
+                    <a href="{% url 'listar_usuarios' %}" class="btn btn-primary w-100 mb-2">Listado de Usuarios</a>
+                    <a href="{% url 'crear_usuario' %}" class="btn btn-outline-primary w-100">Crear Usuario</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventario TI -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-pc-display"></i> Inventario TI</h5>
+                    <p class="card-text">Equipos, celulares, licencias y asignaciones.</p>
+                    <a href="{% url 'listar_equipos' %}" class="btn btn-primary w-100 mb-2">Equipos TI</a>
+                    <a href="{% url 'listar_celulares' %}" class="btn btn-outline-primary w-100 mb-2">Celulares</a>
+                    <a href="{% url 'listar_licencias' %}" class="btn btn-outline-primary w-100 mb-2">Licencias</a>
+                    <a href="{% url 'listar_asignaciones' %}" class="btn btn-outline-primary w-100">Asignaciones</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Soporte Técnico -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-tools"></i> Soporte Técnico</h5>
+                    <p class="card-text">Tickets, RMA y resoluciones.</p>
+                    <a href="/tickets" class="btn btn-primary w-100 mb-2">Tickets</a>
+                    <a href="/rma" class="btn btn-outline-primary w-100 mb-2">RMA</a>
+                    <a href="/resoluciones" class="btn btn-outline-primary w-100">Resoluciones</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biblioteca / Mantenedores -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-collection"></i> Biblioteca</h5>
+                    <p class="card-text">Mantenedores de datos base.</p>
+                    <a href="/mantenedor/marcas" class="btn btn-primary w-100 mb-2">Marcas</a>
+                    <a href="/mantenedor/modelos" class="btn btn-outline-primary w-100 mb-2">Modelos</a>
+                    <a href="/mantenedor/categorias" class="btn btn-outline-primary w-100">Categorías</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tareas -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-list-task"></i> Tareas</h5>
+                    <p class="card-text">Tipos, prioridades y estados.</p>
+                    <a href="/tareas" class="btn btn-primary w-100 mb-2">Listado de Tareas</a>
+                    <a href="/tareas/tipos" class="btn btn-outline-primary w-100 mb-2">Tipos de Tareas</a>
+                    <a href="/tareas/estados" class="btn btn-outline-primary w-100">Estados</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

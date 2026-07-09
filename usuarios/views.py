@@ -7,9 +7,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.http import HttpResponse
 from django.contrib.auth import get_user_model
-#from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from .forms import UsuarioForm, UsuarioUpdateForm, LoginForm
 from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import Group
+from .models import Usuario, Perfil
+from .forms import UsuarioForm, UsuarioEditarForm, PerfilForm
+from django.contrib.admin.views.decorators import staff_member_required
+
+
 
 
 def login_view(request):
@@ -31,86 +36,87 @@ def login_view(request):
 
 
 
+def listar_usuarios(request):
+    usuarios = Usuario.objects.all().order_by("first_name")
+    return render(request, "usuarios/listar.html", {"usuarios": usuarios})
 
-
-
-def es_admin(user):
-    return user.is_superuser or user.is_staff # O también podrías usar un grupo especial
-
-@user_passes_test(es_admin)
-def cambiar_grupo_usuario(request, perfil_id):
-    perfil = get_object_or_404(Perfil, id=perfil_id)
-    grupos = Group.objects.all()
-
-    if request.method == 'POST':
-        grupo_id = request.POST.get('grupo')
-        grupo = Group.objects.get(id=grupo_id)
-        perfil.grupo = grupo
-        perfil.save()
-        return redirect('listar_usuarios')  # O donde quieras
-
-    return render(request, 'cambiar_grupo.html', {'perfil': perfil, 'grupos': grupos})
-
-
-# usuarios/views.py
-
-def createUsuario(request):
-    if request.method == 'POST':
+def crear_usuario(request):
+    if request.method == "POST":
         form = UsuarioForm(request.POST)
         if form.is_valid():
-            # 1️⃣ Crear el usuario
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])  # Solo si tu form pide contraseña
-            user.save()
+            usuario = form.save(commit=False)
+            usuario.save()
 
-            # 2️⃣ Asignar al grupo "Integrador" por defecto
-            grupo_defecto, _ = Group.objects.get_or_create(name="Integrador")
-            user.groups.add(grupo_defecto)
+            # Asignar grupos
+            usuario.groups.set(form.cleaned_data["grupos"])
 
-            # 3️⃣ Crear o actualizar el perfil
-            perfil, created = Perfil.objects.get_or_create(
-                user=user,
-                defaults={'grupo': grupo_defecto}
+            # Crear perfil
+            Perfil.objects.create(
+                user=usuario,
+                rut=form.cleaned_data["rut"],
+                telefono=form.cleaned_data["telefono"],
+                cargo=form.cleaned_data["cargo"],
+                area=form.cleaned_data["area"],
             )
-            if not created:
-                perfil.grupo = grupo_defecto
-                perfil.save()
 
-            return redirect('login')  # O donde quieras redirigir
+            return redirect("listar_usuarios")
     else:
         form = UsuarioForm()
 
-    return render(request, 'createUsuario.html', {'form': form})
+    return render(request, "usuarios/crear.html", {"form": form})
 
 
+def editar_usuario(request, user_id):
+    usuario = get_object_or_404(Usuario, pk=user_id)
+    perfil = usuario.perfil
 
-def updateUsuario(request, pk):
-    usuario = get_user_model().objects.get(pk=pk)
-    if request.method == 'POST':
-        form = UsuarioUpdateForm(request.POST, instance=usuario)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Usuario actualizado exitosamente.")
-            return redirect('usuario_list')
+    if request.method == "POST":
+        form_user = UsuarioEditarForm(request.POST, instance=usuario)
+        form_perfil = PerfilForm(request.POST, request.FILES, instance=perfil)
+
+        if form_user.is_valid() and form_perfil.is_valid():
+            form_user.save()
+            form_perfil.save()
+
+            usuario.groups.set(form_user.cleaned_data["grupos"])
+
+            return redirect("listar_usuarios")
+
     else:
-        form = UsuarioUpdateForm(instance=usuario)
-    return render(request, 'usuarios/usuario_form.html', {'form': form})
+        form_user = UsuarioEditarForm(instance=usuario)
+        form_user.fields["grupos"].initial = usuario.groups.all()
+        form_perfil = PerfilForm(instance=perfil)
 
-def deleteUsuario(request, pk):
-    usuario = get_user_model().objects.get(pk=pk)
-    if request.method == 'POST':
-        usuario.delete()
-        messages.success(request, "Usuario eliminado exitosamente.")
-        return redirect('usuario_list')
-    return render(request, 'usuarios/usuario_confirm_delete.html', {'usuario': usuario})
-
-
-def listUsuarios(request):
-    usuarios = get_user_model().objects.all()
-    return render(request, 'listarUsuarios.html', {'usuarios': usuarios})
+    return render(request, "usuarios/editar.html", {
+        "form_user": form_user,
+        "form_perfil": form_perfil,
+        "usuario": usuario
+    })
 
 
-#@login_required
+
+def cambiar_estado_usuario(request, user_id):
+    usuario = get_object_or_404(Usuario, pk=user_id)
+    usuario.is_active = not usuario.is_active
+    usuario.save()
+    return redirect("listar_usuarios")
+
+
+def eliminar_usuario(request, user_id):
+    usuario = get_object_or_404(Usuario, pk=user_id)
+    usuario.delete()
+    return redirect("listar_usuarios")
+
+
+
+
+@staff_member_required
+def dashboard_mantenedor(request):
+    return render(request, "usuarios/mantenedor_dashboard.html")
+
+
+
+
 def dashboard(request):
     if request.user.is_authenticated:
         return render(request, 'usuarios/dashboard.html', {'user': request.user})
